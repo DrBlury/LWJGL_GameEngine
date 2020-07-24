@@ -14,7 +14,6 @@ public class DummyGame implements IGameLogic {
 
     private final Renderer renderer;
 
-
     private Mesh mesh;
 
     public DummyGame() {
@@ -22,33 +21,31 @@ public class DummyGame implements IGameLogic {
     }
 
     @Override
-    public void init() throws Exception {
-        renderer.init();
+    public void init(Window window) throws Exception {
+        renderer.init(window);
         float[] positions = new float[]{
-                -0.5f,  0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.5f,  0.5f, 0.0f
+                -0.5f,  0.5f, -1.05f,
+                -0.5f, -0.5f, -1.05f,
+                0.5f, -0.5f, -1.05f,
+                0.5f,  0.5f, -1.05f,
         };
-
-        int[] indices = new int[]{
-                0, 1, 3, 3, 1, 2
-        };
-
-        float[] colours = new float[] {
+        float[] colours = new float[]{
                 0.5f, 0.0f, 0.0f,
                 0.0f, 0.5f, 0.0f,
                 0.0f, 0.0f, 0.5f,
                 0.0f, 0.5f, 0.5f,
         };
-        mesh = new Mesh(positions, indices, colours);
+        int[] indices = new int[]{
+                0, 1, 3, 3, 1, 2,
+        };
+        mesh = new Mesh(positions, colours, indices);
     }
 
     @Override
     public void input(Window window) {
-        if (window.isKeyPressed(GLFW_KEY_E)) {
+        if (window.isKeyPressed(GLFW_KEY_Q)) {
             direction = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_Q)) {
+        } else if (window.isKeyPressed(GLFW_KEY_E)) {
             direction = -1;
         } else {
             direction = 0;
@@ -74,6 +71,7 @@ public class DummyGame implements IGameLogic {
     @Override
     public void cleanup() {
         renderer.cleanup();
+        mesh.cleanUp();
     }
 
 }
