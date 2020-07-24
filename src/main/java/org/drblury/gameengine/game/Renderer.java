@@ -9,7 +9,6 @@ import org.drblury.gameengine.engine.graph.ShaderProgram;
 import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Renderer {
 
@@ -43,8 +42,8 @@ public class Renderer {
         float aspectRatio = (float) window.getWidth() / window.getHeight();
         projectionMatrix = new Matrix4f().perspective(Renderer.FOV, aspectRatio, Renderer.Z_NEAR, Renderer.Z_FAR);
         shaderProgram.createUniform("projectionMatrix");
-
         shaderProgram.createUniform("worldMatrix");
+        shaderProgram.createUniform("texture_sampler");
     }
 
     public void render(Window window, GameObject[] gameObjects) {
@@ -70,6 +69,9 @@ public class Renderer {
             // Render the Mesh of this GameObject
             gameObject.getMesh().render();
         }
+
+        // Set Textures
+        shaderProgram.setUniform("texture_sampler", 0);
 
         shaderProgram.unbind();
     }
