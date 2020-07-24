@@ -2,17 +2,15 @@ package org.drblury.gameengine.game;
 
 import org.drblury.gameengine.engine.GameObject;
 import org.drblury.gameengine.engine.Transform;
-import org.drblury.gameengine.engine.graph.Mesh;
 import org.drblury.gameengine.engine.Utils;
 import org.drblury.gameengine.engine.Window;
+import org.drblury.gameengine.engine.graph.Camera;
 import org.drblury.gameengine.engine.graph.ShaderProgram;
 import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
-
-    private ShaderProgram shaderProgram;
 
     /**
      * Field of View in Radians
@@ -23,30 +21,32 @@ public class Renderer {
 
     private static final float Z_FAR = 1000.f;
 
-    private Matrix4f projectionMatrix;
+    private final Transform transform;
 
-    private Transform transform;
-
+    private ShaderProgram shaderProgram;
 
     public Renderer() {
         transform = new Transform();
     }
 
     public void init(Window window) throws Exception {
+        // Create shader
         shaderProgram = new ShaderProgram();
         shaderProgram.createVertexShader(Utils.loadResource("/vertex.vs"));
         shaderProgram.createFragmentShader(Utils.loadResource("/fragment.fs"));
         shaderProgram.link();
 
-        // Create projection matrix
-        float aspectRatio = (float) window.getWidth() / window.getHeight();
-        projectionMatrix = new Matrix4f().perspective(Renderer.FOV, aspectRatio, Renderer.Z_NEAR, Renderer.Z_FAR);
+        // Create uniforms for modelView and projection matrices and texture
         shaderProgram.createUniform("projectionMatrix");
-        shaderProgram.createUniform("worldMatrix");
+        shaderProgram.createUniform("modelViewMatrix");
         shaderProgram.createUniform("texture_sampler");
     }
 
-    public void render(Window window, GameObject[] gameObjects) {
+    public void clear() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    public void render(Window window, Camera camera, GameObject[] gameObjects) {
         clear();
 
         if (window.isResized()) {
@@ -60,18 +60,18 @@ public class Renderer {
         Matrix4f projectionMatrix = transform.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
-        // Render each GameObject
-        for (GameObject gameObject: gameObjects) {
-            // Set world matrix
-            Matrix4f worldMatrix = transform.getWorldMatrix(gameObject.getPosition(), gameObject.getRotation(), gameObject.getScale());
-            shaderProgram.setUniform("worldMatrix", worldMatrix);
+        // Update view Matrix
+        Matrix4f viewMatrix = transform.getViewMatrix(camera);
 
-            // Render the Mesh of this GameObject
+        shaderProgram.setUniform("texture_sampler", 0);
+        // Render each gameItem
+        for (GameObject gameObject : gameObjects) {
+            // Set model view matrix for this item
+            Matrix4f modelViewMatrix = transform.getModelViewMatrix(gameObject, viewMatrix);
+            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+            // Render the mes for this game item
             gameObject.getMesh().render();
         }
-
-        // Set Textures
-        shaderProgram.setUniform("texture_sampler", 0);
 
         shaderProgram.unbind();
     }
@@ -80,10 +80,6 @@ public class Renderer {
         if (shaderProgram != null) {
             shaderProgram.cleanup();
         }
-    }
-
-    public void clear() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
 }
