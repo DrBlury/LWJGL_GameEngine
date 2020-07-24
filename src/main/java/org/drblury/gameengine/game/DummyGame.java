@@ -76,11 +76,16 @@ public class DummyGame implements IGameLogic {
             gameObject.setScale(scale);
 
             // Update rotation angle
-            float rotation = gameObject.getRotation().z + 1.5f;
-            if ( rotation > 360 ) {
-                rotation = 0;
+            float rotationZ = gameObject.getRotation().z + 1.5f;
+            if ( rotationZ > 360 ) {
+                rotationZ = 0;
             }
-            gameObject.setRotation(0, 0, rotation);
+            // Update rotation angle
+            float rotationX = gameObject.getRotation().x + 1.5f;
+            if ( rotationX > 360 ) {
+                rotationX = 0;
+            }
+            gameObject.setRotation(rotationX, 0, rotationZ);
         }
     }
 
@@ -99,26 +104,46 @@ public class DummyGame implements IGameLogic {
 
     private void createGameObject() {
         float[] positions = new float[]{
-                -0.5f,  0.5f, -1.05f,
-                -0.5f, -0.5f, -1.05f,
-                0.5f, -0.5f, -1.05f,
-                0.5f,  0.5f, -1.05f,
-                -0.6f,  0.0f, -1.05f,
-                0.6f,  0.0f, -1.05f,
+                // VO
+                -0.5f,  0.5f,  0.5f,
+                // V1
+                -0.5f, -0.5f,  0.5f,
+                // V2
+                0.5f, -0.5f,  0.5f,
+                // V3
+                0.5f,  0.5f,  0.5f,
+                // V4
+                -0.5f,  0.5f, -0.5f,
+                // V5
+                0.5f,  0.5f, -0.5f,
+                // V6
+                -0.5f, -0.5f, -0.5f,
+                // V7
+                0.5f, -0.5f, -0.5f
         };
         float[] colours = new float[]{
                 0.5f, 0.0f, 0.0f,
-                0.0f, 0.5f, 0.2f,
-                0.0f, 0.8f, 0.5f,
-                0.0f, 0.2f, 0.5f,
-                0.0f, 0.2f, 0.5f,
-                0.0f, 0.7f, 0.0f,
+                0.0f, 0.5f, 0.0f,
+                0.0f, 0.0f, 0.5f,
+                0.0f, 0.5f, 0.5f,
+                0.5f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.0f,
+                0.0f, 0.0f, 0.5f,
+                0.0f, 0.5f, 0.5f
         };
         int[] indices = new int[]{
-                0, 1, 3, // first triangle
-                3, 1, 2, // second triangle
-                0, 1, 4, // third triangle
-                2, 3, 5, // fourth triangle
+                // Front face
+                0, 1, 3, 3, 1, 2,
+                // Top Face
+                4, 0, 3, 5, 4, 3,
+                // Right face
+                3, 2, 7, 5, 3, 7,
+                // Left face
+                6, 1, 0, 6, 0, 4,
+                // Bottom face
+                2, 1, 6, 2, 6, 7,
+                // Back face
+                7, 6, 4, 7, 4, 5,
         };
         Mesh mesh = new Mesh(positions, colours, indices);
         GameObject gameObject = new GameObject(mesh);
