@@ -1,5 +1,7 @@
 package org.drblury.gameengine.game;
 
+import org.drblury.gameengine.engine.GameObject;
+import org.drblury.gameengine.engine.Transform;
 import org.drblury.gameengine.engine.graph.Mesh;
 import org.drblury.gameengine.engine.Utils;
 import org.drblury.gameengine.engine.Window;
@@ -24,8 +26,11 @@ public class Renderer {
 
     private Matrix4f projectionMatrix;
 
+    private Transform transform;
+
 
     public Renderer() {
+        transform = new Transform();
     }
 
     public void init(Window window) throws Exception {
@@ -38,9 +43,11 @@ public class Renderer {
         float aspectRatio = (float) window.getWidth() / window.getHeight();
         projectionMatrix = new Matrix4f().perspective(Renderer.FOV, aspectRatio, Renderer.Z_NEAR, Renderer.Z_FAR);
         shaderProgram.createUniform("projectionMatrix");
+
+        shaderProgram.createUniform("worldMatrix");
     }
 
-    public void render(Window window, Mesh mesh) {
+    public void render(Window window, GameObject[] gameObjects) {
         clear();
 
         if (window.isResized()) {
@@ -49,15 +56,20 @@ public class Renderer {
         }
 
         shaderProgram.bind();
+
+        // Update projection Matrix
+        Matrix4f projectionMatrix = transform.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
+        // Render each GameObject
+        for (GameObject gameObject: gameObjects) {
+            // Set world matrix
+            Matrix4f worldMatrix = transform.getWorldMatrix(gameObject.getPosition(), gameObject.getRotation(), gameObject.getScale());
+            shaderProgram.setUniform("worldMatrix", worldMatrix);
 
-        // Draw the mesh
-        glBindVertexArray(mesh.getVaoId());
-        glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
-
-        // Restore state
-        glBindVertexArray(0);
+            // Render the Mesh of this GameObject
+            gameObject.getMesh().render();
+        }
 
         shaderProgram.unbind();
     }
