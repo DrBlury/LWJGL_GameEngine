@@ -1,7 +1,7 @@
 package org.drblury.gameengine.game;
 
 import org.drblury.gameengine.engine.IGameLogic;
-import org.drblury.gameengine.engine.Mesh;
+import org.drblury.gameengine.engine.graph.Mesh;
 import org.drblury.gameengine.engine.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -62,15 +62,22 @@ public class DummyGame implements IGameLogic {
                 -0.5f, -0.5f, -1.05f,
                 0.5f, -0.5f, -1.05f,
                 0.5f,  0.5f, -1.05f,
+                -0.6f,  0.0f, -1.05f,
+                0.6f,  0.0f, -1.05f,
         };
         float[] colours = new float[]{
                 0.5f, 0.0f, 0.0f,
-                0.0f, 0.5f, 0.0f,
-                0.0f, 0.0f, 0.5f,
-                0.0f, 0.5f, 0.5f,
+                0.0f, 0.5f, 0.2f,
+                0.0f, 0.8f, 0.5f,
+                0.0f, 0.2f, 0.5f,
+                0.0f, 0.2f, 0.5f,
+                0.0f, 0.7f, 0.0f,
         };
         int[] indices = new int[]{
-                0, 1, 3, 3, 1, 2,
+                0, 1, 3, // first triangle
+                3, 1, 2, // second triangle
+                0, 1, 4, // third triangle
+                2, 3, 5, // fourth triangle
         };
         mesh = new Mesh(positions, colours, indices);
     }

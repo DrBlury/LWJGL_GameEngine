@@ -1,13 +1,12 @@
 package org.drblury.gameengine.game;
 
-import org.drblury.gameengine.engine.Mesh;
+import org.drblury.gameengine.engine.graph.Mesh;
 import org.drblury.gameengine.engine.Utils;
 import org.drblury.gameengine.engine.Window;
 import org.drblury.gameengine.engine.graph.ShaderProgram;
 import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Renderer {
@@ -37,12 +36,8 @@ public class Renderer {
 
         // Create projection matrix
         float aspectRatio = (float) window.getWidth() / window.getHeight();
-        projectionMatrix = new Matrix4f().setPerspective(Renderer.FOV, aspectRatio, Renderer.Z_NEAR, Renderer.Z_FAR);
+        projectionMatrix = new Matrix4f().perspective(Renderer.FOV, aspectRatio, Renderer.Z_NEAR, Renderer.Z_FAR);
         shaderProgram.createUniform("projectionMatrix");
-    }
-
-    public void clear() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     public void render(Window window, Mesh mesh) {
@@ -72,4 +67,9 @@ public class Renderer {
             shaderProgram.cleanup();
         }
     }
+
+    public void clear() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
 }

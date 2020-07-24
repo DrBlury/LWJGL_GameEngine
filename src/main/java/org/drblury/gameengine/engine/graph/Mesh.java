@@ -1,4 +1,4 @@
-package org.drblury.gameengine.engine;
+package org.drblury.gameengine.engine.graph;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
