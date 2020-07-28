@@ -5,10 +5,14 @@ import org.drblury.gameengine.engine.IGameLogic;
 import org.drblury.gameengine.engine.graph.Camera;
 import org.drblury.gameengine.engine.graph.Mesh;
 import org.drblury.gameengine.engine.Window;
+import org.drblury.gameengine.engine.graph.OBJLoader;
 import org.drblury.gameengine.engine.graph.Texture;
 import org.drblury.gameengine.engine.input.MouseInput;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -31,105 +35,36 @@ public class DummyGame implements IGameLogic {
     @Override
     public void init(Window window) throws Exception {
         renderer.init(window);
-        // Create the Mesh
-        float[] positions = new float[]{
-                // V0
-                -0.5f, 0.5f, 0.5f,
-                // V1
-                -0.5f, -0.5f, 0.5f,
-                // V2
-                0.5f, -0.5f, 0.5f,
-                // V3
-                0.5f, 0.5f, 0.5f,
-                // V4
-                -0.5f, 0.5f, -0.5f,
-                // V5
-                0.5f, 0.5f, -0.5f,
-                // V6
-                -0.5f, -0.5f, -0.5f,
-                // V7
-                0.5f, -0.5f, -0.5f,
-                // For text coords in top face
-                // V8: V4 repeated
-                -0.5f, 0.5f, -0.5f,
-                // V9: V5 repeated
-                0.5f, 0.5f, -0.5f,
-                // V10: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V11: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // For text coords in right face
-                // V12: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // V13: V2 repeated
-                0.5f, -0.5f, 0.5f,
-                // For text coords in left face
-                // V14: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V15: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // For text coords in bottom face
-                // V16: V6 repeated
-                -0.5f, -0.5f, -0.5f,
-                // V17: V7 repeated
-                0.5f, -0.5f, -0.5f,
-                // V18: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // V19: V2 repeated
-                0.5f, -0.5f, 0.5f,};
-        float[] textCoords = new float[]{
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.5f, 0.0f,
-                0.0f, 0.0f,
-                0.5f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                // For text coords in top face
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.0f, 1.0f,
-                0.5f, 1.0f,
-                // For text coords in right face
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                // For text coords in left face
-                0.5f, 0.0f,
-                0.5f, 0.5f,
-                // For text coords in bottom face
-                0.5f, 0.0f,
-                1.0f, 0.0f,
-                0.5f, 0.5f,
-                1.0f, 0.5f,};
-        int[] indices = new int[]{
-                // Front face
-                0, 1, 3, 3, 1, 2,
-                // Top Face
-                8, 10, 11, 9, 8, 11,
-                // Right face
-                12, 13, 7, 5, 12, 7,
-                // Left face
-                14, 15, 6, 4, 14, 6,
-                // Bottom face
-                16, 18, 19, 17, 16, 19,
-                // Back face
-                4, 6, 7, 5, 4, 7,};
+
         Texture texture = new Texture("/home/drblury/LWJGL_GameEngine/src/main/resources/grassblock.png");
-        Mesh mesh = new Mesh(positions, textCoords, indices, texture);
-        GameObject gameObject1 = new GameObject(mesh);
-        gameObject1.setScale(0.5f);
-        gameObject1.setPosition(0, 0, -2);
-        GameObject gameObject2 = new GameObject(mesh);
-        gameObject2.setScale(0.5f);
-        gameObject2.setPosition(0.5f, 0.5f, -2);
-        GameObject gameObject3 = new GameObject(mesh);
-        gameObject3.setScale(0.5f);
-        gameObject3.setPosition(0, 0, -2.5f);
-        GameObject gameObject4 = new GameObject(mesh);
-        gameObject4.setScale(0.5f);
-        gameObject4.setPosition(0.5f, 0, -2.5f);
-        gameObjects = new GameObject[]{gameObject1, gameObject2, gameObject3, gameObject4};
+        Mesh mesh = OBJLoader.loadMesh("/cube.obj");
+        mesh.setTexture(texture);
+        GameObject gameObject = new GameObject(mesh);
+        gameObject.setPosition(0, 0, 0);
+        gameObject.setScale(0.3f);
+
+        gameObjects = new GameObject[]{gameObject};
+    }
+
+    private void generateSimpleTerrain(Mesh mesh) {
+        List<GameObject> gameObjectsList = new ArrayList<>();
+        float scaleSize = 1f;
+        int xLength = 50;
+        int yLength = 3;
+        int zLength = 50;
+        for (int x = 0; x < xLength; x++) {
+            for (int y = 0; y < yLength; y++) {
+                for (int z = 0; z < zLength; z++) {
+                    GameObject gameObject = new GameObject(mesh);
+                    gameObject.setScale(scaleSize);
+                    gameObject.setPosition(x, y, z);
+                    gameObjectsList.add(gameObject);
+                }
+            }
+        }
+
+        gameObjects = new GameObject[gameObjectsList.size()];
+        gameObjects = gameObjectsList.toArray(gameObjects);
     }
 
     @Override
