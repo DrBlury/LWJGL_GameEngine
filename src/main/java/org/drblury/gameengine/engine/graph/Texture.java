@@ -43,7 +43,6 @@ public class Texture {
                 throw new Exception("Image file [" + fileName  + "] not loaded: " + stbi_failure_reason());
             }
 
-            /* Get width and height of image */
             width = w.get();
             height = h.get();
         }
