@@ -11,13 +11,9 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
-
     private final int programId;
-
     private int vertexShaderId;
-
     private int fragmentShaderId;
-
     private final Map<String, Integer> uniforms;
 
     public ShaderProgram() throws Exception {

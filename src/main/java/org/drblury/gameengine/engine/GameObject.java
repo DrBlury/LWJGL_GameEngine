@@ -3,7 +3,7 @@ package org.drblury.gameengine.engine;
 import org.drblury.gameengine.engine.graph.Mesh;
 import org.joml.Vector3f;
 
-public class GameObject {
+public class GameItem {
     private final Mesh mesh;
     private Vector3f position;
     private float scale;
@@ -41,7 +41,7 @@ public class GameObject {
         return rotation;
     }
 
-    public GameObject(Mesh mesh) {
+    public GameItem(Mesh mesh) {
         this.mesh = mesh;
         this.position = new Vector3f(0, 0, 0);
         this.scale = 1;
