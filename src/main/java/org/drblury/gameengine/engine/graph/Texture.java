@@ -11,6 +11,15 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture {
 
     private final int id;
+    private boolean transparent;
+
+    public boolean isTransparent() {
+        return transparent;
+    }
+
+    public void setTransparent(boolean transparent) {
+        this.transparent = transparent;
+    }
 
     public Texture(String fileName) throws Exception {
         this(loadTexture(fileName));

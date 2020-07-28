@@ -8,6 +8,7 @@ import org.drblury.gameengine.engine.graph.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -62,6 +63,14 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
+    public static void enableCulling() {
+        GL11.glEnable(GL_CULL_FACE);
+        GL11.glCullFace(GL_BACK);
+    }
+    public static void disableCulling() {
+        GL11.glDisable(GL_CULL_FACE);
+    }
+
     public void render(Window window, Camera camera, GameObject[] gameItems, Vector3f ambientLight,
                        PointLight[] pointLightList, SpotLight[] spotLightList, DirectionalLight directionalLight) {
 
@@ -88,12 +97,16 @@ public class Renderer {
         // Render each gameItem
         for (GameObject gameObject : gameItems) {
             Mesh mesh = gameObject.getMesh();
+            if (mesh.getMaterial().getTexture().isTransparent()) {
+                disableCulling();
+            }
             // Set model view matrix for this item
             Matrix4f modelViewMatrix = transform.getModelViewMatrix(gameObject, viewMatrix);
             shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
             // Render the mesh for this game item
             shaderProgram.setUniform("material", mesh.getMaterial());
             mesh.render();
+            enableCulling();
         }
 
         shaderProgram.unbind();
