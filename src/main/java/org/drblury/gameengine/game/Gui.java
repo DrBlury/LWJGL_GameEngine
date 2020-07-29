@@ -8,15 +8,10 @@ import org.joml.Vector4f;
 import java.awt.*;
 
 public class Gui implements IGui {
-
     private static final Font FONT = new Font("Arial", Font.PLAIN, 20);
-
     private static final String CHARSET = "ISO-8859-1";
-
     private final GameObject[] gameObjects;
-
     private final TextObject statusTextItem;
-
     private final GameObject compassItem;
 
     public Gui(String statusText) throws Exception {

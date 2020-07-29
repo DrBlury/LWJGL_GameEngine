@@ -1,15 +1,10 @@
 package org.drblury.gameengine.game;
-
-import org.drblury.gameengine.engine.GameObject;
 import org.drblury.gameengine.engine.IGameLogic;
 import org.drblury.gameengine.engine.graph.*;
 import org.drblury.gameengine.engine.Window;
 import org.drblury.gameengine.engine.input.MouseInput;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -54,7 +49,7 @@ public class DummyGame implements IGameLogic {
         setupLights();
 
         // Create HUD
-        gui = new Gui("DEMO");
+        gui = new Gui("Henlo");
 
         camera.getPosition().x = 0.0f;
         camera.getPosition().z = 0.0f;
@@ -113,26 +108,12 @@ public class DummyGame implements IGameLogic {
         // Update directional light direction, intensity and colour
         SceneLight sceneLight = scene.getSceneLight();
         DirectionalLight directionalLight = sceneLight.getDirectionalLight();
-        lightAngle += 0.5f;
-        if (lightAngle > 90) {
-            directionalLight.setIntensity(0);
-            if (lightAngle >= 360) {
-                lightAngle = -90;
-            }
-            sceneLight.getSkyBoxLight().set(0.3f, 0.3f, 0.3f);
-        } else if (lightAngle <= -80 || lightAngle >= 80) {
-            float factor = 1 - (float) (Math.abs(lightAngle) - 80) / 10.0f;
-            sceneLight.getSkyBoxLight().set(factor, factor, factor);
-            directionalLight.setIntensity(factor);
-            directionalLight.getColor().y = Math.max(factor, 0.9f);
-            directionalLight.getColor().z = Math.max(factor, 0.5f);
-        } else {
-            sceneLight.getSkyBoxLight().set(1.0f, 1.0f, 1.0f);
-            directionalLight.setIntensity(1);
-            directionalLight.getColor().x = 1;
-            directionalLight.getColor().y = 1;
-            directionalLight.getColor().z = 1;
-        }
+
+        directionalLight.setIntensity(1);
+        directionalLight.getColor().x = 1;
+        directionalLight.getColor().y = 1;
+        directionalLight.getColor().z = 1;
+        lightAngle = 70;
         double angRad = Math.toRadians(lightAngle);
         directionalLight.getDirection().x = (float) Math.sin(angRad);
         directionalLight.getDirection().y = (float) Math.cos(angRad);
@@ -150,29 +131,6 @@ public class DummyGame implements IGameLogic {
         scene.cleanup();
         if (gui != null) {
             gui.cleanup();
-        }
-    }
-
-
-    private void generateSimpleTerrain(Mesh mesh) {
-        List<GameObject> gameObjectsList = new ArrayList<>();
-        float scaleSize = 0.5f;
-        int xLength = 50;
-        int yLength = 3;
-        int zLength = 50;
-
-        int xOffset = 0;
-        int yOffset = -4;
-        int zOffset = 0;
-        for (int x = 0; x < xLength; x++) {
-            for (int y = 0; y < yLength; y++) {
-                for (int z = 0; z < zLength; z++) {
-                    GameObject gameObject = new GameObject(mesh);
-                    gameObject.setScale(scaleSize);
-                    gameObject.setPosition(x + xOffset, y + yOffset, z + zOffset);
-                    gameObjectsList.add(gameObject);
-                }
-            }
         }
     }
 }
